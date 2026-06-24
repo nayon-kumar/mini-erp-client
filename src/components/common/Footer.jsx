@@ -43,7 +43,7 @@ const Footer = () => {
 
         {/* Bottom Section */}
         <div className="border-t border-gray-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center text-sm">
-          <p>© {new Date().getFullYear()} MyProject. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Mini ERP. All rights reserved.</p>
 
           <div className="flex gap-4 mt-3 md:mt-0">
             <span className="hover:text-white cursor-pointer">
