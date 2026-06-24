@@ -59,7 +59,6 @@ const RegisterForm = () => {
     if (validateForm()) {
       setIsLoading(true);
       try {
-        console.log(formData);
         const { data, error } = await authClient.signUp.email(formData);
 
         if (error) {
@@ -69,6 +68,7 @@ const RegisterForm = () => {
             message: error.message || "Registration failed. Please try again.",
           });
         } else {
+          await authClient.signOut();
           console.log("Registration successful:", data);
           setSubmitStatus({
             type: "success",
