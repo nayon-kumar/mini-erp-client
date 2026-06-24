@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/common/Navbar";
+import Footer from "@/components/common/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Home - MiniERP",
+  title: "Home - Mini ERP",
   description:
     "A modern ERP solution for managing products, customers, suppliers, purchases, sales, inventory, invoices, and business reports through a centralized dashboard.",
 };
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
       >
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );

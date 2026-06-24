@@ -59,7 +59,7 @@ export default function Navbar() {
 
   // TODO: Replace this with your actual authentication logic
   // Example: const { user } = useAuth(); or const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
-  const isLoggedIn = false; // Change this to true to test logged-in state
+  const isLoggedIn = true; // Change this to true to test logged-in state
 
   // Determine which links to show based on login status
   const navLinks = isLoggedIn ? allNavLinks : publicLinks;
