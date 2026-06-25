@@ -188,7 +188,7 @@ export default function EditProductPage() {
 
         // Redirect after 2 seconds
         setTimeout(() => {
-          router.push("/dashboard/products");
+          router.push("/dashboard/admin/products");
         }, 2000);
       } else {
         setError(data.message || "Failed to update product");
@@ -203,7 +203,7 @@ export default function EditProductPage() {
 
   // Handle cancel
   const handleCancel = () => {
-    router.push("/dashboard/products");
+    router.push("/dashboard/admin/products");
   };
 
   // Handle remove image
@@ -231,7 +231,7 @@ export default function EditProductPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <Link
-            href="/dashboard/products"
+            href="/dashboard/admin/products"
             className="mb-2 inline-flex items-center gap-2 text-blue-600 hover:text-blue-700"
           >
             <ArrowLeft size={18} />

@@ -33,26 +33,8 @@ const allNavLinks = [
   {
     name: "Dashboard",
     icon: <LayoutDashboard size={18} />,
-    href: "/dashboard",
+    href: "/dashboard/admin",
     roles: ["admin", "customer", "supplier"], // all logged-in users
-  },
-  {
-    name: "Customers",
-    icon: <Users size={18} />,
-    href: "/customers",
-    roles: ["admin", "customer"], // admin and customer
-  },
-  {
-    name: "Suppliers",
-    icon: <Truck size={18} />,
-    href: "/suppliers",
-    roles: ["admin", "supplier"], // admin and supplier
-  },
-  {
-    name: "Sales",
-    icon: <ShoppingCart size={18} />,
-    href: "/sales",
-    roles: ["admin"], // admin only
   },
 ];
 

@@ -81,12 +81,12 @@ export default function ProductsPage() {
 
   // Handle view product
   const handleView = (id) => {
-    router.push(`/dashboard/products/${id}`);
+    router.push(`/dashboard/admin/products/${id}`);
   };
 
   // Handle edit product
   const handleEdit = (id) => {
-    router.push(`/dashboard/products/edit/${id}`);
+    router.push(`/dashboard/admin/products/edit/${id}`);
   };
 
   // Filter products based on search
@@ -117,7 +117,7 @@ export default function ProductsPage() {
         </div>
 
         <Link
-          href="/dashboard/products/add"
+          href="/dashboard/admin/products/add"
           className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-white hover:bg-blue-700"
         >
           <Plus size={18} />

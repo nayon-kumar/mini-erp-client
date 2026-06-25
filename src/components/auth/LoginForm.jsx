@@ -34,6 +34,24 @@ const LoginForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Function to determine redirect path based on role
+  const getRedirectPath = (role) => {
+    // Convert to lowercase for case-insensitive comparison
+    const userRole = role?.toLowerCase();
+
+    switch (userRole) {
+      case "admin":
+        return "/dashboard/admin";
+      case "manager":
+        return "/dashboard/manager";
+      case "user":
+        return "/dashboard/user";
+      default:
+        // Default fallback if role is not recognized
+        return "/dashboard";
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitStatus({ type: "", message: "" });
@@ -55,18 +73,30 @@ const LoginForm = () => {
           });
         } else {
           console.log("Login successful:", data);
+
+          // Extract user role from the response
+          // Adjust this based on your actual response structure
+          const userRole = data?.user?.role || data?.role || "user";
+
+          console.log("User role:", userRole);
+
           setSubmitStatus({
             type: "success",
-            message: "Login successful! Redirecting...",
+            message: `Login successful! Redirecting to ${userRole} dashboard...`,
           });
+
           // Reset form
           setFormData({
             email: "",
             password: "",
           });
-          // Redirect to dashboard or home after success
+
+          // Get redirect path based on role
+          const redirectPath = getRedirectPath(userRole);
+
+          // Redirect to role-based dashboard
           setTimeout(() => {
-            window.location.href = "/dashboard";
+            window.location.href = redirectPath;
           }, 2000);
         }
       } catch (error) {

@@ -63,7 +63,7 @@ export default function DashboardLayout({ children }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="h-full bg-gray-100">
+    <div className="h-full min-h-screen bg-gray-100">
       {/* Mobile Overlay */}
       {open && (
         <div
