@@ -42,10 +42,10 @@ const LoginForm = () => {
     switch (userRole) {
       case "admin":
         return "/dashboard/admin";
-      case "manager":
-        return "/dashboard/manager";
-      case "user":
-        return "/dashboard/user";
+      case "customer":
+        return "/dashboard/customer";
+      case "supplier":
+        return "/dashboard/supplier";
       default:
         // Default fallback if role is not recognized
         return "/dashboard";
