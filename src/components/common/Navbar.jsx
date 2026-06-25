@@ -207,7 +207,7 @@ export default function Navbar() {
           {/* Right Section */}
           <div className="flex items-center gap-3">
             {/* User Section */}
-            <div className="hidden md:flex items-center gap-3 rounded-xl bg-white px-3 py-2">
+            <div className="hidden md:flex items-center gap-3 px-3 py-2">
               {isLoggedIn ? (
                 // Logged in state
                 <>
