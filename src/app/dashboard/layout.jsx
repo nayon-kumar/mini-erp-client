@@ -18,42 +18,42 @@ import {
 const menuItems = [
   {
     name: "Dashboard",
-    href: "/dashboard",
+    href: "/dashboard/admin",
     icon: LayoutDashboard,
   },
   {
     name: "Products",
-    href: "/dashboard/products",
+    href: "/dashboard/admin/products",
     icon: Package,
   },
   {
     name: "Customers",
-    href: "/dashboard/customers",
+    href: "/dashboard/admin/customers",
     icon: Users,
   },
   {
     name: "Suppliers",
-    href: "/dashboard/suppliers",
+    href: "/dashboard/admin/suppliers",
     icon: Truck,
   },
   {
     name: "Purchases",
-    href: "/dashboard/purchases",
+    href: "/dashboard/admin/purchases",
     icon: ShoppingCart,
   },
   {
     name: "Sales",
-    href: "/dashboard/sales",
+    href: "/dashboard/admin/sales",
     icon: BarChart3,
   },
   {
     name: "Reports",
-    href: "/dashboard/reports",
+    href: "/dashboard/admin/reports",
     icon: BarChart3,
   },
   {
     name: "Settings",
-    href: "/dashboard/settings",
+    href: "/dashboard/admin/settings",
     icon: Settings,
   },
 ];
