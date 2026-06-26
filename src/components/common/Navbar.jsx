@@ -86,20 +86,22 @@ export default function Navbar() {
 
     const userRole = getUserRole();
 
-    // Admin can access all links except public ones (they're included anyway)
+    // Admin can access all links
     if (userRole === "admin") {
       return allNavLinks;
     }
 
-    // Filter links based on user role
-    return allNavLinks.filter((link) => {
-      // Skip public links for logged-in users (they're already shown)
+    // For customers and suppliers, show public links + role-specific links
+    const userLinks = allNavLinks.filter((link) => {
+      // Always show public links (Home, Products) for logged-in users
       if (link.roles.includes("public")) {
-        return false; // Don't show public links in nav when logged in
+        return true;
       }
       // Check if user role has access to this link
       return link.roles.includes(userRole);
     });
+
+    return userLinks;
   };
 
   const navLinks = getNavLinks();
