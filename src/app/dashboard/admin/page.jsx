@@ -77,53 +77,6 @@ export default function DashboardPage() {
           );
         })}
       </div>
-
-      {/* Recent Activities */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Recent Activities</h2>
-
-          <button className="text-sm font-medium text-blue-600 hover:text-blue-700">
-            View All
-          </button>
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4">
-            <div>
-              <p className="font-medium">
-                New product added: Wireless Headphone
-              </p>
-              <p className="text-sm text-gray-500">5 minutes ago</p>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4">
-            <div>
-              <p className="font-medium">
-                New sale completed for Invoice #INV-1001
-              </p>
-              <p className="text-sm text-gray-500">20 minutes ago</p>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4">
-            <div>
-              <p className="font-medium">
-                Supplier delivered 150 units of Product A
-              </p>
-              <p className="text-sm text-gray-500">1 hour ago</p>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4">
-            <div>
-              <p className="font-medium">Customer registration completed</p>
-              <p className="text-sm text-gray-500">2 hours ago</p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
