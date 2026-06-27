@@ -15,16 +15,23 @@ export default function ProductsPage() {
   const [deletingId, setDeletingId] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Fetch products from API
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [currentPage]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/products");
+      // Increase limit to show all products (set to a large number or fetch all pages)
+      const limit = 1000; // Or use a large number to get all products
+      const response = await fetch(
+        `http://localhost:5000/products?page=${page}&limit=${limit}`,
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch products");
@@ -33,10 +40,50 @@ export default function ProductsPage() {
       const data = await response.json();
       if (data.success) {
         setProducts(data.products);
+        setTotalProducts(data.total || 0);
+        setTotalPages(data.totalPages || 1);
       } else {
         setProducts([]);
       }
 
+      setError("");
+    } catch (err) {
+      setError("Failed to load products. Please try again.");
+      console.error("Error fetching products:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Alternative: Fetch all pages
+  const fetchAllProducts = async () => {
+    try {
+      setLoading(true);
+      let allProducts = [];
+      let page = 1;
+      let hasMore = true;
+
+      while (hasMore) {
+        const response = await fetch(
+          `http://localhost:5000/products?page=${page}&limit=100`,
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+
+        const data = await response.json();
+        if (data.success && data.products.length > 0) {
+          allProducts = [...allProducts, ...data.products];
+          page++;
+          hasMore = data.products.length === 100; // If we got less than limit, it's the last page
+        } else {
+          hasMore = false;
+        }
+      }
+
+      setProducts(allProducts);
+      setTotalProducts(allProducts.length);
       setError("");
     } catch (err) {
       setError("Failed to load products. Please try again.");
@@ -118,7 +165,14 @@ export default function ProductsPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-          <p className="text-gray-600">Manage your products and inventory.</p>
+          <p className="text-gray-600">
+            Manage your products and inventory.
+            {totalProducts > 0 && (
+              <span className="ml-2 text-blue-600 font-medium">
+                ({totalProducts} products total)
+              </span>
+            )}
+          </p>
         </div>
 
         <Link
@@ -292,6 +346,88 @@ export default function ProductsPage() {
           </table>
         )}
       </div>
+
+      {/* Pagination (Optional) */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 rounded-2xl">
+          <div className="flex flex-1 justify-between sm:hidden">
+            <button
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages, currentPage + 1))
+              }
+              disabled={currentPage === totalPages}
+              className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+          <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-gray-700">
+                Showing <span className="font-medium">{products.length}</span>{" "}
+                products
+              </p>
+            </div>
+            <div>
+              <nav
+                className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                aria-label="Pagination"
+              >
+                <button
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                >
+                  <span className="sr-only">Previous</span>
+                  &larr;
+                </button>
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
+                        currentPage === pageNum
+                          ? "z-10 bg-blue-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                          : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={() =>
+                    setCurrentPage(Math.min(totalPages, currentPage + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                >
+                  <span className="sr-only">Next</span>
+                  &rarr;
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog isOpen={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

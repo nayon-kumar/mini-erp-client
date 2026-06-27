@@ -117,7 +117,7 @@ export default function ProductDetailsPage() {
 
       // Redirect to orders page or show success
       setTimeout(() => {
-        router.push("/orders");
+        router.push("/dashboard/admin");
       }, 2000);
     } catch (err) {
       setError(err.message || "Failed to place order. Please try again.");

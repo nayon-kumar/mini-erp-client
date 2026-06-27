@@ -41,21 +41,6 @@ const menuItems = [
     href: "/dashboard/admin/purchases",
     icon: ShoppingCart,
   },
-  {
-    name: "Sales",
-    href: "/dashboard/admin/sales",
-    icon: BarChart3,
-  },
-  {
-    name: "Reports",
-    href: "/dashboard/admin/reports",
-    icon: BarChart3,
-  },
-  {
-    name: "Settings",
-    href: "/dashboard/admin/settings",
-    icon: Settings,
-  },
 ];
 
 export default function DashboardLayout({ children }) {
