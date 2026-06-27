@@ -17,6 +17,8 @@ export default function EditProductPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isFetching, setIsFetching] = useState(true);
+  const [suppliers, setSuppliers] = useState([]);
+  const [loadingSuppliers, setLoadingSuppliers] = useState(true);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -31,6 +33,35 @@ export default function EditProductPage() {
     image: "",
     description: "",
   });
+
+  // Fetch suppliers
+  useEffect(() => {
+    fetchSuppliers();
+  }, []);
+
+  const fetchSuppliers = async () => {
+    try {
+      setLoadingSuppliers(true);
+      const response = await fetch("http://localhost:5000/suppliers");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch suppliers");
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSuppliers(data.data || []);
+      } else {
+        setSuppliers([]);
+      }
+    } catch (err) {
+      console.error("Error fetching suppliers:", err);
+      setSuppliers([]);
+    } finally {
+      setLoadingSuppliers(false);
+    }
+  };
 
   // Fetch product data
   useEffect(() => {
@@ -321,7 +352,7 @@ export default function EditProductPage() {
             </select>
           </div>
 
-          {/* Supplier */}
+          {/* Supplier - Now dynamically populated */}
           <div>
             <label className="mb-2 block text-sm font-medium">Supplier</label>
 
@@ -330,11 +361,25 @@ export default function EditProductPage() {
               value={formData.supplier}
               onChange={handleChange}
               className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+              disabled={loadingSuppliers}
             >
-              <option value="">Select Supplier</option>
-              <option value="ABC Supplier">ABC Supplier</option>
-              <option value="XYZ Supplier">XYZ Supplier</option>
+              <option value="">
+                {loadingSuppliers ? "Loading suppliers..." : "Select Supplier"}
+              </option>
+              {suppliers.map((supplier) => (
+                <option
+                  key={supplier._id}
+                  value={supplier.name || supplier.email}
+                >
+                  {supplier.name || supplier.email}
+                </option>
+              ))}
             </select>
+            {!loadingSuppliers && suppliers.length === 0 && (
+              <p className="mt-1 text-sm text-amber-600">
+                No suppliers available
+              </p>
+            )}
           </div>
 
           {/* Purchase Price */}

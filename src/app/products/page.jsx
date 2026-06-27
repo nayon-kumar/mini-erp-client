@@ -1,42 +1,55 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import ProductCard from "@/components/products/ProductCard";
 import ProductFilters from "@/components/products/ProductFilters";
 
-const products = [
-  {
-    id: 1,
-    name: "Wireless Mouse",
-    category: "Electronics",
-    price: 899,
-    stock: 18,
-    image: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=600",
-  },
-  {
-    id: 2,
-    name: "Gaming Keyboard",
-    category: "Electronics",
-    price: 1999,
-    stock: 6,
-    image: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=600",
-  },
-  {
-    id: 3,
-    name: "Office Chair",
-    category: "Furniture",
-    price: 6999,
-    stock: 12,
-    image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600",
-  },
-  {
-    id: 4,
-    name: "Notebook",
-    category: "Stationery",
-    price: 120,
-    stock: 60,
-    image: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=600",
-  },
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  // Filter States
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
+  const [sort, setSort] = useState("newest");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+
+  // Pagination
+  const [page, setPage] = useState(1);
+  const limit = 12;
+
+  const fetchProducts = async () => {
+    try {
+      const params = new URLSearchParams();
+
+      if (search) params.append("search", search);
+      if (category !== "All") params.append("category", category);
+      if (minPrice) params.append("minPrice", minPrice);
+      if (maxPrice) params.append("maxPrice", maxPrice);
+
+      params.append("sort", sort);
+      params.append("page", page);
+      params.append("limit", limit);
+
+      const res = await fetch(`${API_URL}/products?${params.toString()}`);
+      const data = await res.json();
+
+      if (data.success) {
+        setProducts(data.products);
+        setTotal(data.total);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [search, category, minPrice, maxPrice, sort, page]);
+
   return (
     <section className="max-w-7xl mx-auto px-4 py-12">
       <div className="text-center mb-10">
@@ -44,16 +57,53 @@ export default function ProductsPage() {
         <p className="text-gray-500 mt-2">Browse all available products.</p>
       </div>
 
-      <ProductFilters />
+      <ProductFilters
+        search={search}
+        setSearch={setSearch}
+        category={category}
+        setCategory={setCategory}
+        sort={sort}
+        setSort={setSort}
+        minPrice={minPrice}
+        setMinPrice={setMinPrice}
+        maxPrice={maxPrice}
+        setMaxPrice={setMaxPrice}
+      />
 
-      <p className="mt-8 mb-5 text-gray-600">
-        {products.length} Products Found
-      </p>
+      <p className="mt-8 mb-5 text-gray-600">{total} Products Found</p>
 
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+      {products.length === 0 ? (
+        <div className="text-center py-20">
+          <h3 className="text-xl font-semibold">No Products Found</h3>
+        </div>
+      ) : (
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {products.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+
+      <div className="flex justify-center mt-10 gap-2">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((prev) => prev - 1)}
+          className="px-4 py-2 rounded border disabled:opacity-50"
+        >
+          Previous
+        </button>
+
+        <span className="px-4 py-2 font-semibold">Page {page}</span>
+
+        <button
+          disabled={page * limit >= total}
+          onClick={() => setPage((prev) => prev + 1)}
+          className="px-4 py-2 rounded border disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </section>
   );

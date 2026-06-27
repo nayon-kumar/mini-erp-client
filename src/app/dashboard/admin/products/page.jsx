@@ -31,7 +31,12 @@ export default function ProductsPage() {
       }
 
       const data = await response.json();
-      setProducts(data);
+      if (data.success) {
+        setProducts(data.products);
+      } else {
+        setProducts([]);
+      }
+
       setError("");
     } catch (err) {
       setError("Failed to load products. Please try again.");

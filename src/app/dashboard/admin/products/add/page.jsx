@@ -2,7 +2,7 @@
 
 import { ArrowLeft, Upload, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AddProductPage() {
@@ -11,9 +11,16 @@ export default function AddProductPage() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [suppliers, setSuppliers] = useState([]);
+  const [loadingSuppliers, setLoadingSuppliers] = useState(true);
 
   // Create a ref for the file input
   const fileInputRef = useRef(null);
+
+  // API Base URL from environment variables
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  const IMGBB_API_KEY = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
 
   // Form state
   const [formData, setFormData] = useState({
@@ -29,6 +36,51 @@ export default function AddProductPage() {
     description: "",
   });
 
+  // Fetch suppliers from backend
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        setLoadingSuppliers(true);
+        const response = await fetch(`${API_BASE_URL}/suppliers`);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch suppliers");
+        }
+
+        const data = await response.json();
+
+        // Assuming your suppliers API returns an array of suppliers
+        // If you don't have a suppliers endpoint yet, you can use mock data
+        if (data.success && data.data) {
+          setSuppliers(data.data);
+        } else if (Array.isArray(data)) {
+          setSuppliers(data);
+        } else {
+          // Fallback to mock data if endpoint doesn't exist yet
+          setSuppliers([
+            { _id: "1", name: "ABC Supplier" },
+            { _id: "2", name: "XYZ Supplier" },
+            { _id: "3", name: "Tech Supply Co." },
+            { _id: "4", name: "Global Imports" },
+          ]);
+        }
+      } catch (err) {
+        console.error("Error fetching suppliers:", err);
+        // Set default suppliers if API fails
+        setSuppliers([
+          { _id: "1", name: "ABC Supplier" },
+          { _id: "2", name: "XYZ Supplier" },
+          { _id: "3", name: "Tech Supply Co." },
+          { _id: "4", name: "Global Imports" },
+        ]);
+      } finally {
+        setLoadingSuppliers(false);
+      }
+    };
+
+    fetchSuppliers();
+  }, [API_BASE_URL]);
+
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,6 +88,9 @@ export default function AddProductPage() {
       ...prev,
       [name]: value,
     }));
+
+    // Clear error when user starts typing
+    if (error) setError("");
   };
 
   // Trigger file input click
@@ -64,19 +119,27 @@ export default function AddProductPage() {
     setError("");
 
     try {
+      // Check if API key exists
+      if (!IMGBB_API_KEY) {
+        throw new Error("Image upload API key is not configured");
+      }
+
       // Create form data for ImgBB API
       const imageFormData = new FormData();
       imageFormData.append("image", file);
 
-      // Replace with your ImgBB API key
-      const API_KEY = "a39ff95aa0aceebbf5000666d57d646c";
       const response = await fetch(
-        `https://api.imgbb.com/1/upload?key=${API_KEY}`,
+        `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
         {
           method: "POST",
           body: imageFormData,
         },
       );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || "Failed to upload image");
+      }
 
       const data = await response.json();
 
@@ -89,10 +152,10 @@ export default function AddProductPage() {
         setSuccess("Image uploaded successfully!");
         setTimeout(() => setSuccess(""), 3000);
       } else {
-        setError(data.error?.message || "Failed to upload image");
+        throw new Error(data.error?.message || "Failed to upload image");
       }
     } catch (err) {
-      setError("Network error while uploading image");
+      setError(err.message || "Failed to upload image");
       console.error("Image upload error:", err);
     } finally {
       setUploadingImage(false);
@@ -100,6 +163,32 @@ export default function AddProductPage() {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+    }
+  };
+
+  // Validate SKU uniqueness
+  const checkSkuUniqueness = async (sku) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/products?search=${sku}`);
+
+      if (!response.ok) {
+        return true; // If API fails, proceed with caution
+      }
+
+      const data = await response.json();
+
+      // Check if any product has the same SKU
+      if (data.products && Array.isArray(data.products)) {
+        const existingProduct = data.products.find(
+          (product) => product.sku.toLowerCase() === sku.toLowerCase(),
+        );
+        return !existingProduct;
+      }
+
+      return true;
+    } catch (err) {
+      console.error("Error checking SKU:", err);
+      return true; // Proceed if we can't check
     }
   };
 
@@ -117,24 +206,50 @@ export default function AddProductPage() {
       return;
     }
 
+    // Validate SKU uniqueness
+    const isSkuUnique = await checkSkuUniqueness(formData.sku);
+    if (!isSkuUnique) {
+      setError("SKU already exists. Please use a unique SKU.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch("http://localhost:5000/products", {
+      // Prepare product data
+      const productData = {
+        productName: formData.productName.trim(),
+        sku: formData.sku.trim(),
+        category: formData.category,
+        supplier: formData.supplier || "",
+        purchasePrice: parseFloat(formData.purchasePrice) || 0,
+        sellingPrice: parseFloat(formData.sellingPrice) || 0,
+        stock: parseInt(formData.stock) || 0,
+        image: formData.image || "",
+        description: formData.description || "",
+        status: formData.status,
+      };
+
+      const response = await fetch(`${API_BASE_URL}/products`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...formData,
-          purchasePrice: parseFloat(formData.purchasePrice) || 0,
-          sellingPrice: parseFloat(formData.sellingPrice) || 0,
-          stock: parseInt(formData.stock) || 0,
-        }),
+        body: JSON.stringify(productData),
       });
+
+      // Handle non-200 responses
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP error! status: ${response.status}`,
+        );
+      }
 
       const data = await response.json();
 
       if (data.success) {
         setSuccess("Product added successfully!");
+
         // Reset form
         setFormData({
           productName: "",
@@ -154,10 +269,10 @@ export default function AddProductPage() {
           router.push("/dashboard/admin/products");
         }, 2000);
       } else {
-        setError(data.message || "Failed to add product");
+        throw new Error(data.message || "Failed to add product");
       }
     } catch (err) {
-      setError("Network error. Please try again.");
+      setError(err.message || "Network error. Please try again.");
       console.error("Error adding product:", err);
     } finally {
       setLoading(false);
@@ -241,6 +356,9 @@ export default function AddProductPage() {
               required
               className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
             />
+            <p className="mt-1 text-xs text-gray-500">
+              Must be unique. Example: PRD-001, LAP-001
+            </p>
           </div>
 
           {/* Category */}
@@ -261,6 +379,10 @@ export default function AddProductPage() {
               <option value="Accessories">Accessories</option>
               <option value="Fashion">Fashion</option>
               <option value="Office Supplies">Office Supplies</option>
+              <option value="Books">Books</option>
+              <option value="Food">Food</option>
+              <option value="Health">Health</option>
+              <option value="Home">Home</option>
             </select>
           </div>
 
@@ -272,11 +394,24 @@ export default function AddProductPage() {
               name="supplier"
               value={formData.supplier}
               onChange={handleChange}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+              disabled={loadingSuppliers}
+              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
             >
               <option value="">Select Supplier</option>
-              <option value="ABC Supplier">ABC Supplier</option>
-              <option value="XYZ Supplier">XYZ Supplier</option>
+              {loadingSuppliers ? (
+                <option value="" disabled>
+                  Loading suppliers...
+                </option>
+              ) : (
+                suppliers.map((supplier) => (
+                  <option
+                    key={supplier._id || supplier.id}
+                    value={supplier.name}
+                  >
+                    {supplier.name}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
@@ -357,7 +492,7 @@ export default function AddProductPage() {
 
           <div
             onClick={handleUploadClick}
-            className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 p-8 transition hover:border-blue-500"
+            className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 p-8 transition hover:border-blue-500 hover:bg-gray-50"
           >
             <Upload className="mb-3 h-10 w-10 text-gray-400" />
 
@@ -385,19 +520,28 @@ export default function AddProductPage() {
           </div>
 
           {formData.image && (
-            <div className="mt-4 flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+            <div className="mt-4 flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
               <img
                 src={formData.image}
                 alt="Product preview"
                 className="h-20 w-20 object-cover rounded-lg border border-gray-200"
               />
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="font-medium text-gray-700">
                   Image uploaded successfully!
                 </p>
-                <p className="text-sm text-gray-500 break-all">
+                <p className="text-sm text-gray-500 truncate">
                   {formData.image}
                 </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData((prev) => ({ ...prev, image: "" }));
+                  }}
+                  className="mt-1 text-sm text-red-600 hover:text-red-700"
+                >
+                  Remove image
+                </button>
               </div>
             </div>
           )}
@@ -413,7 +557,7 @@ export default function AddProductPage() {
             onChange={handleChange}
             rows={5}
             placeholder="Write product description..."
-            className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 resize-y min-h-[100px]"
           />
         </div>
 
@@ -422,7 +566,7 @@ export default function AddProductPage() {
           <button
             type="submit"
             disabled={loading || uploadingImage}
-            className="rounded-xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="rounded-xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[150px]"
           >
             {loading ? (
               <>
@@ -437,7 +581,8 @@ export default function AddProductPage() {
           <button
             type="button"
             onClick={handleCancel}
-            className="rounded-xl border border-gray-300 px-6 py-3 font-medium hover:bg-gray-50"
+            disabled={loading || uploadingImage}
+            className="rounded-xl border border-gray-300 px-6 py-3 font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
