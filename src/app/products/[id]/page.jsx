@@ -38,7 +38,7 @@ export default function ProductDetailsPage() {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:5000/products/${productId}`,
+        `https://mini-erp-server-two.vercel.app/products/${productId}`,
       );
 
       if (!response.ok) {
@@ -99,13 +99,16 @@ export default function ProductDetailsPage() {
         customerEmail: "guest@example.com",
       };
 
-      const response = await fetch("http://localhost:5000/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "https://mini-erp-server-two.vercel.app/orders",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(orderData),
         },
-        body: JSON.stringify(orderData),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to place order");

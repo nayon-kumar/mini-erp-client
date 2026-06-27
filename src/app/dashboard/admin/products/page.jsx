@@ -30,7 +30,7 @@ export default function ProductsPage() {
       // Increase limit to show all products (set to a large number or fetch all pages)
       const limit = 1000; // Or use a large number to get all products
       const response = await fetch(
-        `http://localhost:5000/products?page=${page}&limit=${limit}`,
+        `https://mini-erp-server-two.vercel.app/products?page=${page}&limit=${limit}`,
       );
 
       if (!response.ok) {
@@ -65,7 +65,7 @@ export default function ProductsPage() {
 
       while (hasMore) {
         const response = await fetch(
-          `http://localhost:5000/products?page=${page}&limit=100`,
+          `https://mini-erp-server-two.vercel.app//products?page=${page}&limit=100`,
         );
 
         if (!response.ok) {
@@ -106,7 +106,7 @@ export default function ProductsPage() {
     try {
       setDeletingId(productToDelete._id);
       const response = await fetch(
-        `http://localhost:5000/products/${productToDelete._id}`,
+        `https://mini-erp-server-two.vercel.app/products/${productToDelete._id}`,
         {
           method: "DELETE",
         },

@@ -17,7 +17,8 @@ import {
   Truck,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://mini-erp-server-two.vercel.app";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);

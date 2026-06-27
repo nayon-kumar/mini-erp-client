@@ -40,7 +40,7 @@ export default function ProductDetailsPage() {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:5000/products/${productId}`,
+        `https://mini-erp-server-two.vercel.app/products/${productId}`,
       );
 
       if (!response.ok) {
@@ -65,7 +65,7 @@ export default function ProductDetailsPage() {
     try {
       setDeleting(true);
       const response = await fetch(
-        `http://localhost:5000/products/${product._id}`,
+        `https://mini-erp-server-two.vercel.app/products/${product._id}`,
         {
           method: "DELETE",
         },

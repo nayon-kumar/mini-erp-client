@@ -19,7 +19,8 @@ export default function AddProductPage() {
 
   // API Base URL from environment variables
   const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    "https://mini-erp-server-two.vercel.app";
   const IMGBB_API_KEY = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
 
   // Form state

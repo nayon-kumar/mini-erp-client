@@ -18,7 +18,9 @@ export default function CustomersPage() {
   const fetchCustomers = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/users/role/customer");
+      const response = await fetch(
+        "https://mini-erp-server-two.vercel.app/users/role/customer",
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch customers");
@@ -59,9 +61,12 @@ export default function CustomersPage() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/users/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `https://mini-erp-server-two.vercel.app/users/${id}`,
+        {
+          method: "DELETE",
+        },
+      );
 
       const data = await response.json();
 

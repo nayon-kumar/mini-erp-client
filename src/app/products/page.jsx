@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import ProductCard from "@/components/products/ProductCard";
 import ProductFilters from "@/components/products/ProductFilters";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://mini-erp-server-two.vercel.app";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);

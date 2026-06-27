@@ -55,8 +55,7 @@ export default function DashboardPage() {
     setLoading(true);
     setError(null);
     try {
-      const baseURL =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
       // Fetch dashboard data and products count in parallel
       const [dashboardResponse, productsResponse] = await Promise.all([

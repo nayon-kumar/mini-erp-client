@@ -40,7 +40,9 @@ export default function EditCustomerPage() {
   const fetchCustomer = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/users/${customerId}`);
+      const response = await fetch(
+        `https://mini-erp-server-two.vercel.app/users/${customerId}`,
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch customer");
@@ -94,7 +96,7 @@ export default function EditCustomerPage() {
       setSuccess(false);
 
       const response = await fetch(
-        `http://localhost:5000/users/${customerId}`,
+        `https://mini-erp-server-two.vercel.app/users/${customerId}`,
         {
           method: "PUT",
           headers: {

@@ -28,7 +28,9 @@ export default function SuppliersPage() {
   const fetchSuppliers = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/users/role/supplier");
+      const response = await fetch(
+        "https://mini-erp-server-two.vercel.app/users/role/supplier",
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch suppliers");
@@ -71,9 +73,12 @@ export default function SuppliersPage() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/users/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `https://mini-erp-server-two.vercel.app/users/${id}`,
+        {
+          method: "DELETE",
+        },
+      );
 
       const data = await response.json();
 

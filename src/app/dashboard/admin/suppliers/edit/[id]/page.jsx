@@ -39,7 +39,9 @@ export default function EditSupplierPage() {
   const fetchSupplier = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/users/${supplierId}`);
+      const response = await fetch(
+        `https://mini-erp-server-two.vercel.app/users/${supplierId}`,
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch supplier");
@@ -93,7 +95,7 @@ export default function EditSupplierPage() {
       setSuccess(false);
 
       const response = await fetch(
-        `http://localhost:5000/users/${supplierId}`,
+        `https://mini-erp-server-two.vercel.app/users/${supplierId}`,
         {
           method: "PUT",
           headers: {

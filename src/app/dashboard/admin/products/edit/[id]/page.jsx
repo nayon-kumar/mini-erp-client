@@ -42,7 +42,9 @@ export default function EditProductPage() {
   const fetchSuppliers = async () => {
     try {
       setLoadingSuppliers(true);
-      const response = await fetch("http://localhost:5000/suppliers");
+      const response = await fetch(
+        "https://mini-erp-server-two.vercel.app/suppliers",
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch suppliers");
@@ -74,7 +76,7 @@ export default function EditProductPage() {
     try {
       setIsFetching(true);
       const response = await fetch(
-        `http://localhost:5000/products/${productId}`,
+        `https://mini-erp-server-two.vercel.app/products/${productId}`,
       );
 
       if (!response.ok) {
@@ -197,7 +199,7 @@ export default function EditProductPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/products/${productId}`,
+        `https://mini-erp-server-two.vercel.app/products/${productId}`,
         {
           method: "PUT",
           headers: {
