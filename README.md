@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📊 Mini ERP - A modern ERP solution
 
-## Getting
+A modern **ERP solution** for managing products, customers, suppliers, purchases, sales, inventory, invoices, and business reports through a centralized dashboard.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌐 Live Demo
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+👉 https://mini-erp-client.vercel.app/
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔑 Demo Credentials
 
-## Learn More
+Use the following credentials to explore the application without creating a new account.
 
-To learn more about Next.js, take a look at the following resources:
+| Role        | Email                 | Password       |
+| ----------- | --------------------- | -------------- |
+| 👑 Admin    | `admin@gmail.com`     | `Admin@123`    |
+| 👨‍💼 Customer | `customer1@gmail.com` | `Customer@123` |
+| 👤 Supplier | `supplier1@gmail.com` | `Supplier@123` |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> **Note:** These are demo accounts intended for testing purposes only.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📸 Screenshots
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+##### Home
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<p align="center">
+  <img src="./screenshots/1.png" width="90%" />
+</p>
+
+##### Why Choose Us
+
+<p align="center">
+  <img src="./screenshots/7.png" width="90%" />
+</p>
+
+##### Products
+
+<p align="center">
+  <img src="./screenshots/2.png" width="90%" />
+</p>
+
+##### Admin Dashboard
+
+<p align="center">
+  <img src="./screenshots/3.png" width="90%" />
+</p>
+
+##### Products
+
+<p align="center">
+  <img src="./screenshots/4.png" width="90%" />
+</p>
+
+##### Add New Products
+
+<p align="center">
+  <img src="./screenshots/5.png" width="90%" />
+</p>
+
+##### Purchaser
+
+<p align="center">
+  <img src="./screenshots/6.png" width="90%" />
+</p>
