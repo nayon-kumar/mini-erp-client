@@ -74,8 +74,8 @@ export default function DashboardLayout({ children }) {
           {menuItems.map((item) => {
             const Icon = item.icon;
 
-            const active =
-              pathname === item.href || pathname.startsWith(item.href + "/");
+            // Fixed: Dashboard only active when exactly on the dashboard path
+            const active = pathname === item.href;
 
             return (
               <Link
